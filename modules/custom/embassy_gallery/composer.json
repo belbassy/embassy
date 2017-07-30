@@ -1,0 +1,14 @@
+{
+  "name": "drupal/embassy_gallery",
+  "type": "drupal-module",
+  "description": "Embassy Photo Galleries",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/embassy_gallery",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/embassy_gallery",
+    "source": "http://cgit.drupalcode.org/embassy_gallery"
+  },
+  "require": { }
+}

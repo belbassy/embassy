@@ -1,0 +1,5 @@
+name: embassy_gallery
+type: module
+description: Embassy Photo Galleries
+core: 8.x
+package: Custom
