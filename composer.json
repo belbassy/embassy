@@ -31,7 +31,10 @@
         "drupal/pixels": "^2.0",
         "drupal/twitter_block": "^2.1",
         "drupal/aegan": "^1.0",
-        "drupal/address": "~1.0"
+        "drupal/address": "~1.0",
+        "drupal/video_embed_field": "^1.5",
+        "drupal/pathauto": "^1.0",
+        "drupal/pathologic": "1.x-dev"
     },
     "replace": {
         "drupal/core": "~8.3"
