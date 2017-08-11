@@ -4,6 +4,7 @@
     "type": "project",
     "license": "GPL-2.0+",
     "require": {
+        "drupal/core": "~8.3",
         "composer/installers": "^1.0.24",
         "wikimedia/composer-merge-plugin": "~1.4",
         "drupal/markdown": "^1.2",
@@ -34,10 +35,8 @@
         "drupal/address": "~1.0",
         "drupal/video_embed_field": "^1.5",
         "drupal/pathauto": "^1.0",
-        "drupal/pathologic": "1.x-dev"
-    },
-    "replace": {
-        "drupal/core": "~8.3"
+        "drupal/pathologic": "1.x-dev",
+        "drupal/menu_link_attributes": "^1.0@beta"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
