@@ -36,7 +36,11 @@
         "drupal/video_embed_field": "^1.5",
         "drupal/pathauto": "^1.0",
         "drupal/pathologic": "1.x-dev",
-        "drupal/menu_link_attributes": "^1.0@beta"
+        "drupal/menu_link_attributes": "^1.0@beta",
+        "drupal/better_exposed_filters": "^3.0@alpha",
+        "drupal/r4032login": "1.x-dev",
+        "drupal/fullcalendar": "^1.0@alpha",
+        "drupal/spamspan": "^1.0@alpha"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

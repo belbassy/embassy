@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "925c347650618386bab94ed427e82a6d",
+    "content-hash": "ea71ce6ac333b95743658e145b6f2b9b",
     "packages": [
         {
             "name": "alchemy/zippy",
@@ -1350,6 +1350,53 @@
             }
         },
         {
+            "name": "drupal/better_exposed_filters",
+            "version": "3.0.0-alpha3",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupal.org/project/better_exposed_filters",
+                "reference": "8.x-3.0-alpha3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/better_exposed_filters-8.x-3.0-alpha3.zip",
+                "reference": "8.x-3.0-alpha3",
+                "shasum": "0268a42ea5a4ab170c8f4aefecd26b6f3c7448d2"
+            },
+            "require": {
+                "drupal/core": "*"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-3.x": "3.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-3.0-alpha3",
+                    "datestamp": "1501274342",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Alpha releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "mikeker",
+                    "homepage": "https://www.drupal.org/user/192273"
+                }
+            ],
+            "description": "Provides advanced options (such as links, checkboxes, or jQueryUI widgets) for exposed Views elements.",
+            "homepage": "https://www.drupal.org/project/better_exposed_filters",
+            "support": {
+                "source": "http://cgit.drupalcode.org/better_exposed_filters"
+            }
+        },
+        {
             "name": "drupal/bulma",
             "version": "1.0.0-alpha1",
             "source": {
@@ -2034,6 +2081,67 @@
             }
         },
         {
+            "name": "drupal/fullcalendar",
+            "version": "1.0.0-alpha2",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupal.org/project/fullcalendar",
+                "reference": "8.x-1.0-alpha2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/fullcalendar-8.x-1.0-alpha2.zip",
+                "reference": "8.x-1.0-alpha2",
+                "shasum": "76fda439854bebddf32424740f0e4b02e7d82110"
+            },
+            "require": {
+                "drupal/core": "~8.0"
+            },
+            "require-dev": {
+                "drupal/colors": "*"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-1.0-alpha2",
+                    "datestamp": "1372191354",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Alpha releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "aspilicious",
+                    "homepage": "https://www.drupal.org/user/172527"
+                },
+                {
+                    "name": "dakala",
+                    "homepage": "https://www.drupal.org/user/53175"
+                },
+                {
+                    "name": "hefox",
+                    "homepage": "https://www.drupal.org/user/426416"
+                },
+                {
+                    "name": "tim.plunkett",
+                    "homepage": "https://www.drupal.org/user/241634"
+                }
+            ],
+            "homepage": "https://www.drupal.org/project/fullcalendar",
+            "support": {
+                "source": "http://cgit.drupalcode.org/fullcalendar"
+            }
+        },
+        {
             "name": "drupal/juicebox",
             "version": "2.0.0-beta3",
             "source": {
@@ -2666,6 +2774,80 @@
             }
         },
         {
+            "name": "drupal/r4032login",
+            "version": "dev-1.x",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupal.org/project/r4032login",
+                "reference": "391f10d69b9b8c466a2fddac2a6b99f1289e7781"
+            },
+            "require": {
+                "drupal/core": "~8.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-1.x-dev",
+                    "datestamp": "1486527783",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Dev releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Bevan",
+                    "homepage": "https://www.drupal.org/user/49989"
+                },
+                {
+                    "name": "RobLoach",
+                    "homepage": "https://www.drupal.org/user/61114"
+                },
+                {
+                    "name": "Sk8erPeter",
+                    "homepage": "https://www.drupal.org/user/1441344"
+                },
+                {
+                    "name": "bdone",
+                    "homepage": "https://www.drupal.org/user/687670"
+                },
+                {
+                    "name": "deekayen",
+                    "homepage": "https://www.drupal.org/user/972"
+                },
+                {
+                    "name": "lotyrin",
+                    "homepage": "https://www.drupal.org/user/216580"
+                },
+                {
+                    "name": "mikesmullin",
+                    "homepage": "https://www.drupal.org/user/108440"
+                },
+                {
+                    "name": "pwolanin",
+                    "homepage": "https://www.drupal.org/user/49851"
+                },
+                {
+                    "name": "shrop",
+                    "homepage": "https://www.drupal.org/user/14767"
+                }
+            ],
+            "description": "Redirect anonymous users from 403 Access Denied pages to the /user/login page.",
+            "homepage": "https://www.drupal.org/project/r4032login",
+            "support": {
+                "source": "http://cgit.drupalcode.org/r4032login"
+            },
+            "time": "2017-02-08 04:20:19"
+        },
+        {
             "name": "drupal/rules",
             "version": "3.0.0-alpha3",
             "source": {
@@ -2775,6 +2957,61 @@
             "support": {
                 "source": "http://cgit.drupalcode.org/smtp",
                 "issues": "https://www.drupal.org/project/issues/smtp"
+            }
+        },
+        {
+            "name": "drupal/spamspan",
+            "version": "1.0.0-alpha1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupal.org/project/spamspan",
+                "reference": "8.x-1.0-alpha1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/spamspan-8.x-1.0-alpha1.zip",
+                "reference": "8.x-1.0-alpha1",
+                "shasum": "8db346fffb918b583978d73d10ae82110bce6ee8"
+            },
+            "require": {
+                "drupal/core": "~8.1"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-1.0-alpha1",
+                    "datestamp": "1493887084",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Alpha releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "lakka",
+                    "homepage": "https://www.drupal.org/user/63367"
+                },
+                {
+                    "name": "peterx",
+                    "homepage": "https://www.drupal.org/user/23516"
+                },
+                {
+                    "name": "vitalie",
+                    "homepage": "https://www.drupal.org/user/175134"
+                }
+            ],
+            "description": "The SpamSpan module obfuscates email addresses to help prevent spambots from collecting them. It implements the technique at http://www.spamspan.com.",
+            "homepage": "http://drupal.org/project/spamspan",
+            "support": {
+                "source": "http://cgit.drupalcode.org/spamspan"
             }
         },
         {
@@ -7908,6 +8145,10 @@
         "drupal/bulma": 15,
         "drupal/pathologic": 20,
         "drupal/menu_link_attributes": 10,
+        "drupal/better_exposed_filters": 15,
+        "drupal/r4032login": 20,
+        "drupal/fullcalendar": 15,
+        "drupal/spamspan": 15,
         "behat/mink": 20
     },
     "prefer-stable": true,
