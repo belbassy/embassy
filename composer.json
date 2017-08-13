@@ -40,7 +40,8 @@
         "drupal/better_exposed_filters": "^3.0@alpha",
         "drupal/r4032login": "1.x-dev",
         "drupal/fullcalendar": "^1.0@alpha",
-        "drupal/spamspan": "^1.0@alpha"
+        "drupal/spamspan": "^1.0@alpha",
+        "drupal/honeypot": "^1.27"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
