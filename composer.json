@@ -45,7 +45,8 @@
         "drupal/eck": "^1.0@alpha",
         "drupal/features": "^3.5",
         "drupal/field_group": "^1.0@RC",
-        "drupal/content_lock": "^1.0@alpha"
+        "drupal/content_lock": "^1.0@alpha",
+        "drupal/simple_responsive_table": "^1.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
