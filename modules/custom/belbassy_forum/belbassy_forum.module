@@ -1,0 +1,34 @@
+<?php
+
+/**
+ * @file
+ * Contains belbassy_forum.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function belbassy_forum_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the belbassy_forum module.
+    case 'help.page.belbassy_forum':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Custom functionality for the belgian embassy forum') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function belbassy_forum_entity_insert(Drupal\Core\Entity\EntityInterface $entity) {
+
+  if($entity->getEntityTypeId() == 'node' && $entity->bundle() == 'forum') {
+
+  }
+}

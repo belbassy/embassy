@@ -109,7 +109,7 @@ class ChainCommand extends Command
         $placeholder = array_merge(
             array_filter(
                 $inlinePlaceHolders,
-                function($value) {
+                function ($value) {
                     return $value !== null;
                 }
             ),
@@ -208,7 +208,7 @@ class ChainCommand extends Command
         $placeholder = array_merge(
             array_filter(
                 $inlinePlaceHolders,
-                function($value) {
+                function ($value) {
                     return $value !== null;
                 }
             ),
@@ -269,14 +269,14 @@ class ChainCommand extends Command
         }
 
         $inlinePlaceHolderData = new ArrayDataSource($placeholder);
-        $placeholderResolver = new RegexPlaceholderResolver($inlinePlaceHolderData, '%{{', '}}');
+        $placeholderResolver = new RegexPlaceholderResolver($inlinePlaceHolderData, '{{', '}}');
         $chainContent = $placeholderResolver->resolvePlaceholder($chainContent);
 
         // Resolve environmentPlaceHolders
         $environmentPlaceHolders = $this->chainDiscovery->extractEnvironmentPlaceHolders($chainContent);
         $envPlaceHolderMap = [];
         $missingEnvironmentPlaceHolders = [];
-        foreach ($environmentPlaceHolders as $envPlaceHolder => $envPlaceHolderValue) {
+        foreach ($environmentPlaceHolders as $envPlaceHolder) {
             if (!getenv($envPlaceHolder)) {
                 $missingEnvironmentPlaceHolders[$envPlaceHolder] = sprintf(
                     'export %s=%s_VALUE',
@@ -304,7 +304,7 @@ class ChainCommand extends Command
         }
 
         $envPlaceHolderData = new ArrayDataSource($envPlaceHolderMap);
-        $placeholderResolver = new RegexPlaceholderResolver($envPlaceHolderData, '${{', '}}');
+        $placeholderResolver = new RegexPlaceholderResolver($envPlaceHolderData, '%env(', ')%');
         $chainContent = $placeholderResolver->resolvePlaceholder($chainContent);
 
         $parser = new Parser();

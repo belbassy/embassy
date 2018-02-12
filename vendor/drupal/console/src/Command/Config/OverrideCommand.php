@@ -53,13 +53,14 @@ class OverrideCommand extends Command
                 $this->trans('commands.config.override.arguments.name')
             )
             ->addArgument(
-            	'key', 
-            	InputArgument::REQUIRED, 
-            	$this->trans('commands.config.override.arguments.key'))
+                'key',
+                InputArgument::REQUIRED,
+                $this->trans('commands.config.override.arguments.key')
+            )
             ->addArgument(
-            	'value', 
-            	InputArgument::REQUIRED, 
-            	$this->trans('commands.config.override.arguments.value')
+                'value',
+                InputArgument::REQUIRED,
+                $this->trans('commands.config.override.arguments.value')
             )
             ->setAliases(['co']);
     }
@@ -122,7 +123,11 @@ class OverrideCommand extends Command
 
         $config = $this->configFactory->getEditable($configName);
 
-        $configurationOverrideResult = $this->overrideConfiguration($config, $key, $value);
+        $configurationOverrideResult = $this->overrideConfiguration(
+            $config,
+            $key,
+            $value
+        );
 
         $config->save();
 
@@ -136,8 +141,6 @@ class OverrideCommand extends Command
         ];
         $tableRows = $configurationOverrideResult;
         $io->table($tableHeader, $tableRows);
-
-        $config->save();
     }
 
 

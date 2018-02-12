@@ -3,12 +3,12 @@ description: Provides mechanisms for automatically unlocking nodes that have bee
 # core: 8.x
 type: module
 package: Custom
-configure: content_lock_timeout.settings_form
+configure: content_lock_timeout.settings
 dependencies:
- - content_lock
+ - content_lock:content_lock
 
-# Information added by Drupal.org packaging script on 2017-07-21
-version: '8.x-1.0-alpha3'
+# Information added by Drupal.org packaging script on 2018-02-07
+version: '8.x-1.0-alpha7'
 core: '8.x'
 project: 'content_lock'
-datestamp: 1500626045
+datestamp: 1518009187

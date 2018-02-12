@@ -111,7 +111,12 @@ class PluginBlockCommand extends ContainerAwareCommand
             ->setName('generate:plugin:block')
             ->setDescription($this->trans('commands.generate.plugin.block.description'))
             ->setHelp($this->trans('commands.generate.plugin.block.help'))
-            ->addOption('module', null, InputOption::VALUE_REQUIRED, $this->trans('commands.common.options.module'))
+            ->addOption(
+                'module',
+                null,
+                InputOption::VALUE_REQUIRED,
+                $this->trans('commands.common.options.module')
+            )
             ->addOption(
                 'class',
                 null,
@@ -159,12 +164,12 @@ class PluginBlockCommand extends ContainerAwareCommand
         $io = new DrupalStyle($input, $output);
 
         // @see use Drupal\Console\Command\Shared\ConfirmationTrait::confirmGeneration
-        if (!$this->confirmGeneration($io)) {
+        if (!$this->confirmGeneration($io, $input)) {
             return 1;
         }
 
         $module = $input->getOption('module');
-        $class_name = $input->getOption('class');
+        $class_name = $this->validator->validateClassName($input->getOption('class'));
         $label = $input->getOption('label');
         $plugin_id = $input->getOption('plugin-id');
         $services = $input->getOption('services');
@@ -223,12 +228,7 @@ class PluginBlockCommand extends ContainerAwareCommand
         $themeRegions = \system_region_list($theme, REGIONS_VISIBLE);
 
         // --module option
-        $module = $input->getOption('module');
-        if (!$module) {
-            // @see Drupal\Console\Command\Shared\ModuleTrait::moduleQuestion
-            $module = $this->moduleQuestion($io);
-            $input->setOption('module', $module);
-        }
+        $this->getModuleOption();
 
         // --class option
         $class = $input->getOption('class');

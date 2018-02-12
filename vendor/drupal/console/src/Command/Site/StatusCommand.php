@@ -77,7 +77,7 @@ class StatusCommand extends ContainerAwareCommand
      * @param $appRoot
      */
     public function __construct(
-        SystemManager $systemManager,
+        SystemManager $systemManager = null,
         Settings $settings,
         ConfigFactory $configFactory,
         ThemeHandler $themeHandler,
@@ -207,8 +207,8 @@ class StatusCommand extends ContainerAwareCommand
 
         return [
           'theme' => [
-            'theme_default' => $config->get('default'),
-            'theme_admin' => $config->get('admin'),
+            $this->trans('commands.site.status.messages.theme_default') => $config->get('default'),
+            $this->trans('commands.site.status.messages.theme_admin') => $config->get('admin'),
           ],
         ];
     }

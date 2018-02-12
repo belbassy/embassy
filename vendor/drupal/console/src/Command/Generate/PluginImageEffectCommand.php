@@ -7,6 +7,7 @@
 
 namespace Drupal\Console\Command\Generate;
 
+use Drupal\Console\Utils\Validator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -45,6 +46,11 @@ class PluginImageEffectCommand extends Command
     protected $stringConverter;
 
     /**
+     * @var Validator
+     */
+    protected $validator;
+
+    /**
      * @var ChainQueue
      */
     protected $chainQueue;
@@ -56,17 +62,20 @@ class PluginImageEffectCommand extends Command
      * @param Manager                    $extensionManager
      * @param PluginImageEffectGenerator $generator
      * @param StringConverter            $stringConverter
+     * @param Validator                  $validator
      * @param ChainQueue                 $chainQueue
      */
     public function __construct(
         Manager $extensionManager,
         PluginImageEffectGenerator $generator,
         StringConverter $stringConverter,
+        Validator $validator,
         ChainQueue $chainQueue
     ) {
         $this->extensionManager = $extensionManager;
         $this->generator = $generator;
         $this->stringConverter = $stringConverter;
+        $this->validator = $validator;
         $this->chainQueue = $chainQueue;
         parent::__construct();
     }
@@ -77,7 +86,12 @@ class PluginImageEffectCommand extends Command
             ->setName('generate:plugin:imageeffect')
             ->setDescription($this->trans('commands.generate.plugin.imageeffect.description'))
             ->setHelp($this->trans('commands.generate.plugin.imageeffect.help'))
-            ->addOption('module', null, InputOption::VALUE_REQUIRED, $this->trans('commands.common.options.module'))
+            ->addOption(
+                'module',
+                null,
+                InputOption::VALUE_REQUIRED,
+                $this->trans('commands.common.options.module')
+            )
             ->addOption(
                 'class',
                 null,
@@ -113,12 +127,12 @@ class PluginImageEffectCommand extends Command
         $io = new DrupalStyle($input, $output);
 
         // @see use Drupal\Console\Command\Shared\ConfirmationTrait::confirmGeneration
-        if (!$this->confirmGeneration($io)) {
+        if (!$this->confirmGeneration($io, $input)) {
             return 1;
         }
 
         $module = $input->getOption('module');
-        $class_name = $input->getOption('class');
+        $class_name = $this->validator->validateClassName($input->getOption('class'));
         $label = $input->getOption('label');
         $plugin_id = $input->getOption('plugin-id');
         $description = $input->getOption('description');
@@ -133,19 +147,17 @@ class PluginImageEffectCommand extends Command
         $io = new DrupalStyle($input, $output);
 
         // --module option
-        $module = $input->getOption('module');
-        if (!$module) {
-            // @see Drupal\Console\Command\Shared\ModuleTrait::moduleQuestion
-            $module = $this->moduleQuestion($io);
-            $input->setOption('module', $module);
-        }
+        $this->getModuleOption();
 
         // --class option
         $class_name = $input->getOption('class');
         if (!$class_name) {
             $class_name = $io->ask(
                 $this->trans('commands.generate.plugin.imageeffect.questions.class'),
-                'DefaultImageEffect'
+                'DefaultImageEffect',
+                function ($class_name) {
+                    return $this->validator->validateClassName($class_name);
+                }
             );
             $input->setOption('class', $class_name);
         }

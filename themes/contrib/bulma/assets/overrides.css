@@ -9,18 +9,6 @@
     display: -ms-flexbox;
     display: flex; }
 
-#header .nav-right nav {
-  -webkit-overflow-scrolling: touch;
-  -webkit-box-align: stretch;
-  -ms-flex-align: stretch;
-  align-items: stretch;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  flex-shrink: 0;
-  max-width: 100%;
-  overflow: auto; }
-
 @media screen and (max-width: 768px) {
   #header .nav-menu.nav-right.is-active nav {
     display: block; } }
@@ -31,5 +19,19 @@ article section.comment-section article {
 
 .links.bulma {
   padding-top: 1rem; }
+
+.label.is-pulled-left {
+  margin-bottom: 0;
+  margin-right: 0.5rem; }
+  .label.is-pulled-left::after {
+    content: ':'; }
+
+.navbar > .container > .navbar-brand {
+  margin-left: -1rem; }
+.navbar > .container > .navbar-menu {
+  margin-right: -1rem; }
+
+.block-system-branding-block > figure {
+  margin-right: 0.5rem; }
 
 /*# sourceMappingURL=overrides.css.map */

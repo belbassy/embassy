@@ -167,6 +167,18 @@ display:
           custom_date_format: ''
           timezone: ''
           plugin_id: date
+        langcode:
+          id: langcode
+          table: content_lock
+          field: langcode
+          plugin_id: langcode
+          exclude: false
+        form_op:
+          id: form_op
+          table: content_lock
+          field: form_op
+          plugin_id: string
+          exclude: false
         is_locked:
           id: is_locked
           table: content_lock

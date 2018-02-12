@@ -1,0 +1,14 @@
+name: 'Prefetch cache test'
+type: module
+description: 'Provides test classes.'
+# core: 8.x
+package: Testing
+# version: VERSION
+dependencies:
+  - prefetch_cache:prefetch_cache
+
+# Information added by Drupal.org packaging script on 2018-02-07
+version: '8.x-1.0-alpha7'
+core: '8.x'
+project: 'content_lock'
+datestamp: 1518009187

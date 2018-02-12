@@ -7,6 +7,7 @@
 
 namespace Drupal\Console\Command\Generate;
 
+use Drupal\Console\Utils\Validator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -29,13 +30,13 @@ class RouteSubscriberCommand extends Command
     use ConfirmationTrait;
 
     /**
- * @var Manager
-*/
+     * @var Manager
+     */
     protected $extensionManager;
 
     /**
- * @var RouteSubscriberGenerator
-*/
+     * @var RouteSubscriberGenerator
+     */
     protected $generator;
 
     /**
@@ -44,20 +45,28 @@ class RouteSubscriberCommand extends Command
     protected $chainQueue;
 
     /**
+     * @var Validator
+     */
+    protected $validator;
+
+    /**
      * RouteSubscriberCommand constructor.
      *
      * @param Manager                  $extensionManager
      * @param RouteSubscriberGenerator $generator
      * @param ChainQueue               $chainQueue
+     * @param Validator                $validator
      */
     public function __construct(
         Manager $extensionManager,
         RouteSubscriberGenerator $generator,
-        ChainQueue $chainQueue
+        ChainQueue $chainQueue,
+        Validator $validator
     ) {
         $this->extensionManager = $extensionManager;
         $this->generator = $generator;
         $this->chainQueue = $chainQueue;
+        $this->validator = $validator;
         parent::__construct();
     }
 
@@ -98,13 +107,13 @@ class RouteSubscriberCommand extends Command
         $output = new DrupalStyle($input, $output);
 
         // @see use Drupal\Console\Command\Shared\ConfirmationTrait::confirmGeneration
-        if (!$this->confirmGeneration($output)) {
+        if (!$this->confirmGeneration($output, $input)) {
             return 1;
         }
 
         $module = $input->getOption('module');
         $name = $input->getOption('name');
-        $class = $input->getOption('class');
+        $class = $this->validator->validateClassName($input->getOption('class'));
 
         $this->generator->generate($module, $name, $class);
 
@@ -121,12 +130,7 @@ class RouteSubscriberCommand extends Command
         $io = new DrupalStyle($input, $output);
 
         // --module option
-        $module = $input->getOption('module');
-        if (!$module) {
-            // @see Drupal\Console\Command\Shared\ModuleTrait::moduleQuestion
-            $module = $this->moduleQuestion($io);
-            $input->setOption('module', $module);
-        }
+        $module = $this->getModuleOption();
 
         // --name option
         $name = $input->getOption('name');
@@ -143,7 +147,10 @@ class RouteSubscriberCommand extends Command
         if (!$class) {
             $class = $io->ask(
                 $this->trans('commands.generate.routesubscriber.questions.class'),
-                'RouteSubscriber'
+                'RouteSubscriber',
+                function ($class) {
+                    return $this->validator->validateClassName($class);
+                }
             );
             $input->setOption('class', $class);
         }

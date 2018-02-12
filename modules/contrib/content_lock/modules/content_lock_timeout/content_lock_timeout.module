@@ -5,6 +5,7 @@
  * Allowed time-based automatic unlocking of nodes.
  */
 
+use Drupal\Core\Session\SessionManager;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\Entity\User;
@@ -22,7 +23,7 @@ use Drupal\block_content\BlockContentInterface;
 function content_lock_timeout_cron() {
   $config = \Drupal::config('content_lock_timeout.settings');
   $timeout_minutes = $config->get('content_lock_timeout_minutes');
-  $last_valid_time = time() - 60 * $timeout_minutes;
+  $last_valid_time = Drupal::time()->getCurrentTime() - 60 * $timeout_minutes;
   /** @var \Drupal\content_lock\ContentLock\ContentLock $lock_service */
   $lock_service = \Drupal::service('content_lock');
 
@@ -33,7 +34,7 @@ function content_lock_timeout_cron() {
     ->condition('c.timestamp', $last_valid_time, '<');
   $count = 0;
   foreach ($query->execute() as $obj) {
-    $lock_service->release($obj->entity_id, $obj->uid, $obj->entity_type);
+    $lock_service->release($obj->entity_id, $obj->langcode, $obj->form_op, $obj->uid, $obj->entity_type);
     $count++;
   }
 
@@ -58,7 +59,7 @@ function content_lock_timeout_entity_prepare_form(EntityInterface $entity, $oper
       return;
     }
     $timeout_minutes = $config->get('content_lock_timeout_minutes');
-    $last_valid_time = time() - 60 * $timeout_minutes;
+    $last_valid_time = Drupal::time()->getCurrentTime() - 60 * $timeout_minutes;
 
     /** @var \Drupal\content_lock\ContentLock\ContentLock $lock_service */
     $lock_service = \Drupal::service('content_lock');
@@ -69,7 +70,7 @@ function content_lock_timeout_entity_prepare_form(EntityInterface $entity, $oper
     // A different user owns the lock.
     // There is already a lock on this entity.
     if (!empty($entity->id())
-      && is_object($lock = $lock_service->fetchLock($entity->id(), $entity->getEntityTypeId()))
+      && is_object($lock = $lock_service->fetchLock($entity->id(), $entity->language()->getId(), $operation, $entity->getEntityTypeId()))
       && $lock->uid != $user->id()
       && $lock->timestamp < $last_valid_time
       // Now check a subset of the conditions that content_lock_form_alter()
@@ -82,7 +83,7 @@ function content_lock_timeout_entity_prepare_form(EntityInterface $entity, $oper
       && $user->hasPermission('break content lock')
       && ($user->id() > 0)
     ) {
-      $lock_service->release($entity->id(), $lock->uid, $entity->getEntityTypeId());
+      $lock_service->release($entity->id(), $entity->language()->getId(), $operation, $lock->uid, $entity->getEntityTypeId());
 
       if ($lock_service->verbose()) {
         $username = User::load($lock->uid)->getDisplayName();
@@ -96,5 +97,39 @@ function content_lock_timeout_entity_prepare_form(EntityInterface $entity, $oper
           ]));
       }
     }
+  }
+}
+
+/**
+ * Implements hook_user_logout().
+ */
+function content_lock_timeout_user_logout($account) {
+  /** @var \Drupal\Core\Session\AccountInterface $account */
+
+  // Only remove locks if there is a timeout given.
+  $config = \Drupal::config('content_lock_timeout.settings');
+  $timeout_minutes = $config->get('content_lock_timeout_minutes');
+  if ($timeout_minutes == 0) {
+    return;
+  }
+
+  // Only do the database check if the original drupal session manager is used.
+  // Otherwise its not sure if sessions table has correct data. As it would be
+  // possible to extend the Class, instanceof is not used here!
+  if (get_class(Drupal::service('session_manager')) == SessionManager::class) {
+    $query = \Drupal::database()
+      ->select('sessions');
+    $query->condition('uid', $account->id());
+    $query = $query->countQuery();
+    $session_count = (int) $query->execute()->fetchField();
+  }
+  else {
+    $session_count = FALSE;
+  }
+  // Only remove all locks of user if its the last session of the user.
+  if ($session_count === 1) {
+    /** @var \Drupal\content_lock\ContentLock\ContentLock $lock_service */
+    $lock_service = \Drupal::service('content_lock');
+    $lock_service->releaseAllUserLocks($account->id());
   }
 }

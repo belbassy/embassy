@@ -23,7 +23,6 @@ use Drupal\Console\Utils\Validator;
 use Drupal\Console\Utils\Site;
 
 class CommandCommand extends ContainerAwareCommand
-
 {
     use ConfirmationTrait;
     use ServicesTrait;
@@ -113,6 +112,12 @@ class CommandCommand extends ContainerAwareCommand
                 $this->trans('commands.generate.command.options.name')
             )
             ->addOption(
+                'interact',
+                null,
+                InputOption::VALUE_NONE,
+                $this->trans('commands.generate.command.options.interact')
+            )
+            ->addOption(
                 'container-aware',
                 null,
                 InputOption::VALUE_NONE,
@@ -136,14 +141,14 @@ class CommandCommand extends ContainerAwareCommand
 
         $extension = $input->getOption('extension');
         $extensionType = $input->getOption('extension-type');
-        $class = $input->getOption('class');
+        $class = $this->validator->validateCommandName($input->getOption('class'));
         $name = $input->getOption('name');
+        $interact = $input->getOption('interact');
         $containerAware = $input->getOption('container-aware');
         $services = $input->getOption('services');
-        $yes = $input->hasOption('yes')?$input->getOption('yes'):false;
 
         // @see use Drupal\Console\Command\Shared\ConfirmationTrait::confirmGeneration
-        if (!$this->confirmGeneration($io, $yes)) {
+        if (!$this->confirmGeneration($io, $input)) {
             return 1;
         }
 
@@ -154,6 +159,7 @@ class CommandCommand extends ContainerAwareCommand
             $extension,
             $extensionType,
             $name,
+            $interact,
             $class,
             $containerAware,
             $build_services
@@ -191,6 +197,16 @@ class CommandCommand extends ContainerAwareCommand
                 sprintf('%s:default', $extension->getName())
             );
             $input->setOption('name', $name);
+        }
+
+        $interact = $input->getOption('interact');
+
+        if (!$interact) {
+            $interact = $io->confirm(
+                $this->trans('commands.generate.command.questions.interact'),
+                true
+            );
+            $input->setOption('interact', $interact);
         }
 
         $class = $input->getOption('class');

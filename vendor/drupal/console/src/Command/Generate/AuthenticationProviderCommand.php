@@ -7,6 +7,7 @@
 
 namespace Drupal\Console\Command\Generate;
 
+use Drupal\Console\Utils\Validator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,13 +29,13 @@ class AuthenticationProviderCommand extends Command
     use ConfirmationTrait;
 
     /**
- * @var Manager
-*/
+     * @var Manager
+     */
     protected $extensionManager;
 
     /**
- * @var AuthenticationProviderGenerator
-*/
+     * @var AuthenticationProviderGenerator
+     */
     protected $generator;
 
     /**
@@ -42,6 +43,10 @@ class AuthenticationProviderCommand extends Command
      */
     protected $stringConverter;
 
+    /**
+     * @var Validator
+     */
+    protected $validator;
 
     /**
      * AuthenticationProviderCommand constructor.
@@ -49,15 +54,18 @@ class AuthenticationProviderCommand extends Command
      * @param Manager                         $extensionManager
      * @param AuthenticationProviderGenerator $generator
      * @param StringConverter                 $stringConverter
+     * @param Validator                       $validator
      */
     public function __construct(
         Manager $extensionManager,
         AuthenticationProviderGenerator $generator,
-        StringConverter $stringConverter
+        StringConverter $stringConverter,
+        Validator $validator
     ) {
         $this->extensionManager = $extensionManager;
         $this->generator = $generator;
         $this->stringConverter = $stringConverter;
+        $this->validator = $validator;
         parent::__construct();
     }
 
@@ -91,12 +99,12 @@ class AuthenticationProviderCommand extends Command
         $io = new DrupalStyle($input, $output);
 
         // @see use Drupal\Console\Command\Shared\ConfirmationTrait::confirmGeneration
-        if (!$this->confirmGeneration($io)) {
+        if (!$this->confirmGeneration($io, $input)) {
             return 1;
         }
 
         $module = $input->getOption('module');
-        $class = $input->getOption('class');
+        $class = $this->validator->validateClassName($input->getOption('class'));
         $provider_id = $input->getOption('provider-id');
 
         $this->generator->generate($module, $class, $provider_id);
@@ -111,27 +119,18 @@ class AuthenticationProviderCommand extends Command
         $stringUtils = $this->stringConverter;
 
         // --module option
-        $module = $input->getOption('module');
-        if (!$module) {
-            // @see Drupal\Console\Command\Shared\ModuleTrait::moduleQuestion
-            $module = $this->moduleQuestion($io);
-            $input->setOption('module', $module);
-        }
+        $this->getModuleOption();
 
         // --class option
         $class = $input->getOption('class');
         if (!$class) {
             $class = $io->ask(
                 $this->trans(
-                    'commands.generate.authentication.provider.options.class'
+                    'commands.generate.authentication.provider.questions.class'
                 ),
                 'DefaultAuthenticationProvider',
-                function ($value) use ($stringUtils) {
-                    if (!strlen(trim($value))) {
-                        throw new \Exception('The Class name can not be empty');
-                    }
-
-                    return $stringUtils->humanToCamelCase($value);
+                function ($class) {
+                    return $this->validator->validateClassName($class);
                 }
             );
             $input->setOption('class', $class);
@@ -140,7 +139,7 @@ class AuthenticationProviderCommand extends Command
         $provider_id = $input->getOption('provider-id');
         if (!$provider_id) {
             $provider_id = $io->ask(
-                $this->trans('commands.generate.authentication.provider.options.provider-id'),
+                $this->trans('commands.generate.authentication.provider.questions.provider-id'),
                 $stringUtils->camelCaseToUnderscore($class),
                 function ($value) use ($stringUtils) {
                     if (!strlen(trim($value))) {

@@ -30,11 +30,8 @@ regions:
 libraries:
   - BULMA_SUBTHEME_MACHINE_NAME/global
 
-libraries-override:
-  bulma/global: false
-
-# Information added by Drupal.org packaging script on 2017-06-12
-version: '8.x-1.0-alpha1'
+# Information added by Drupal.org packaging script on 2017-09-28
+version: '8.x-1.0-alpha2'
 core: '8.x'
 project: 'bulma'
-datestamp: 1497304749
+datestamp: 1506624580

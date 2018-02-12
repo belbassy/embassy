@@ -146,12 +146,14 @@ function drush_bulma($name = NULL, $machine_name = NULL) {
 
   // Rename files.
   $files_to_rename = [
+    '{{kit}}.cdn.yml',
     '{{kit}}.info.yml',
     '{{kit}}.libraries.yml',
     '{{kit}}.breakpoints.yml',
     '{{kit}}.theme',
+    'assets/{{kit}}.style.css',
+    'assets/{{kit}}.style.css.map',
     'assets/{{kit}}.style.scss',
-    'assets/js/{{kit}}.js',
     'config/install/{{kit}}.settings.yml',
     'config/schema/{{kit}}.schema.yml',
     'config/optional/block.block.{{kit}}_account_menu.yml',
@@ -171,13 +173,6 @@ function drush_bulma($name = NULL, $machine_name = NULL) {
     $file_new_path = $subtheme_path . '/' . str_replace('{{kit}}', $machine_name, $file_to_rename_path);
     drush_op('rename', drush_normalize_path($file_original_path), drush_normalize_path($file_new_path));
   }
-
-  // Templates to rename from default to page.
-  // Page is not used while it overrides main theme page.html.twig
-  $page_template = 'templates/system/{{kit}}.html.twig';
-  $page_original_path = $subtheme_path . '/' . str_replace('{{kit}}', $kit, $page_template);
-  $page_new_path = $subtheme_path . '/' . str_replace('{{kit}}', 'page', $page_template);
-  drush_op('rename', drush_normalize_path($page_original_path), drush_normalize_path($page_new_path));
 
   // Notify user of the newly created theme.
   $message = 'Successfully created the Bulma subtheme "!name" created in: !path using the "!kit" kit';
@@ -218,8 +213,10 @@ function bulma_get_files_to_make_replacements($kit = 'default') {
     'config/optional/block.block.' . $kit . '_search.yml',
     'config/optional/block.block.' . $kit . '_tools.yml',
     'config/schema/' . $kit . '.schema.yml',
+    'assets/' . $kit . '.style.css',
+    'assets/' . $kit . '.style.css.map',
     'assets/' . $kit . '.style.scss',
-    'assets/js/' . $kit . '.js',
+    $kit . '.cdn.yml',
     $kit . '.info.yml',
     $kit . '.libraries.yml',
     $kit . '.theme',

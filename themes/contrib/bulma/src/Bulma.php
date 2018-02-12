@@ -2,7 +2,13 @@
 
 namespace Drupal\bulma;
 
+use Drupal\Component\Serialization\Json;
+use Drupal\Component\Serialization\Yaml;
 use Drupal\Component\Utility\Unicode;
+use Drupal\file\Entity\File;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
 
 /**
  * The primary class for the Drupal Bulma base theme.
@@ -31,35 +37,43 @@ class Bulma {
       case 'table':
         $data = [
           'table' => 1,
-          'is-bordered' => theme_get_setting('bulma_table_bordered'),
-          'is-striped' => theme_get_setting('bulma_table_striped'),
-          'is-narrow' => theme_get_setting('bulma_table_narrow'),
+          'is-bordered' => theme_get_setting('table.bordered'),
+          'is-striped' => theme_get_setting('table.striped'),
+          'is-narrow' => theme_get_setting('table.narrow'),
+        ];
+        break;
+
+      case 'breadcrumb':
+        $data = [
+          'position' => theme_get_setting('breadcrumb.position'),
+          'size' => theme_get_setting('breadcrumb.size'),
+          'style' => theme_get_setting('breadcrumb.separator'),
         ];
         break;
 
       case 'tabs':
         $data = [
-          'position' => theme_get_setting('bulma_tabs_position'),
-          'size' => theme_get_setting('bulma_tabs_size'),
-          'style' => theme_get_setting('bulma_tabs_style'),
-          'is-fullwidth' => theme_get_setting('bulma_tabs_fullwidth'),
+          'position' => theme_get_setting('tabs.position'),
+          'size' => theme_get_setting('tabs.size'),
+          'style' => theme_get_setting('tabs.style'),
+          'is-fullwidth' => theme_get_setting('tabs.fullwidth'),
         ];
         break;
 
       case 'label':
         $data = [
-          'tag' => theme_get_setting('bulma_elements_labels_rounded'),
-          'color' => theme_get_setting('bulma_elements_labels_color'),
-          'size' => theme_get_setting('bulma_elements_labels_size'),
+          'tag' => theme_get_setting('elements.labels_rounded'),
+          'color' => theme_get_setting('elements.labels_color'),
+          'size' => theme_get_setting('elements.labels_size'),
         ];
         break;
 
       case 'button':
         $data = [
-          'colorize' => theme_get_setting('bulma_button_colorize'),
-          'size' => theme_get_setting('bulma_button_size'),
-          'is-outlined' => theme_get_setting('bulma_button_outlined'),
-          'is-inverted' => theme_get_setting('bulma_button_inverted'),
+          'colorize' => theme_get_setting('button.colorize'),
+          'size' => theme_get_setting('button.size'),
+          'is-outlined' => theme_get_setting('button.outlined'),
+          'is-inverted' => theme_get_setting('button.inverted'),
         ];
         break;
 
@@ -303,7 +317,7 @@ class Bulma {
     }
 
     // If default icon is turned on.
-    if (self::singleSetting('bulma_general_icon_type')) {
+    if (self::singleSetting('general.icon_type')) {
       if (empty($class)) {
         switch ($type) {
           case 'file':
@@ -348,4 +362,142 @@ class Bulma {
     return $class;
   }
 
+  /**
+   * Find the appropriate fontawesome icon for a given file.
+   *
+   * @param \Drupal\Core\Entity\Entity\File $file
+   *   A file entity.
+   *
+   * @return string
+   *   Fontawesome CSS class/value.
+   */
+  public static function getFileIcon(File $file) {
+    $mime_type = $file->getMimeType();
+
+    // Retrieve the generic mime type from core.
+    $generic_mime_type = file_icon_class($mime_type);
+
+    // Map the generic mime types to an icon.
+    $icon_map = [
+      'application-pdf' => 'file-pdf-o',
+      'application-x-executable' => 'console',
+      'audio' => 'file-audio-o',
+      'image' => 'file-image-o',
+      'package-x-generic' => 'file-archive-o',
+      'text' => 'file-text-o',
+      'text-html' => 'file-text-o',
+      'text-x-script' => 'file-code-o',
+      'video' =>'file-video-o',
+      'x-office-document' => 'file-text-o',
+      // 'general' is the fallback returned by file_icon_class().
+      'general' => 'file-o',
+    ];
+
+    // Retrieve the icon class.
+    $icon = $icon_map[$generic_mime_type];
+    return $icon;
+  }
+
+  /**
+   * Determines whether there is a local Bulma library.
+   *
+   * @return bool
+   *   The available versions keyed by version, or FALSE on error.
+   */
+  public static function isLocal() {
+    return file_exists(DRUPAL_ROOT . '/libraries/bulma/bulma.sass');
+  }
+
+  /**
+   * Returns data on the CDN.
+   *
+   * @return array|FALSE
+   *   Details used for CDN API calls.
+   */
+  public static function getCdnData() {
+    static $cdn_data;
+
+    if (empty($cdn_data)) {
+      /** @var \Drupal\Core\Theme\ActiveTheme $theme */
+      $theme = \Drupal::theme()->getActiveTheme();
+      $filename = $theme->getPath() . '/' . $theme->getName() . '.cdn.yml';
+      if (file_exists($filename)) {
+        $cdn_data = Yaml::decode(file_get_contents($filename));
+        // Replace version placeholder.
+        foreach (['bulma', 'bulmaswatch'] as $package) {
+          if (!$version = theme_get_setting("cdn.{$package}.version")) {
+            $version = 'latest';
+          }
+          $cdn_data['api'][$package]['file_root'] = str_replace('[version]', $version, $cdn_data['api'][$package]['file_root']);
+        }
+      }
+      else {
+        $cdn_data = FALSE;
+      }
+    }
+    return $cdn_data;
+  }
+
+  /**
+   * Returns data from an API call.
+   *
+   * @param string $api
+   *   An API call URL.
+   *
+   * @return array|FALSE
+   *   The decoded JSON response, or FALSE on error.
+   */
+  public static function getApiData($api) {
+    $client = \Drupal::httpClient();
+    $request = new Request('GET', $api);
+    try {
+      $response = $client->send($request);
+    }
+    catch (RequestException $e) {
+      $response = new Response(400);
+    }
+    $contents = $response->getBody(TRUE)->getContents();
+
+    $json = Json::decode($contents) ?: FALSE;
+
+    return $json;
+  }
+
+  /**
+   * Returns available versions for a package.
+   *
+   * @param string $package
+   *   The name of a package to return version data for. Valid values are
+   *  'bulma' and 'bulmaswatch'.
+   *
+   * @return array|FALSE
+   *   The available versions keyed by version, or FALSE on error.
+   */
+  public static function getCdnVersions($package = 'bulma') {
+    $cdn_data = static::getCdnData();
+    $api = $cdn_data['api'][$package]['version'];
+    $json = static::getApiData($api);
+    if ($json) {
+      return array_combine($json['versions'], $json['versions']);
+    }
+    return FALSE;
+  }
+
+  /**
+   * Returns the locally installed Bulma version.
+   *
+   * @return string|FALSE
+   *   A version string, or FALSE on error.
+   */
+  public static function getBulmaLocalVersion() {
+    $filename = DRUPAL_ROOT . '/libraries/bulma/package.json';
+    if (file_exists($filename)) {
+      $json = Json::decode(file_get_contents($filename));
+      if ($json) {
+        return $json['version'];
+      }
+    }
+
+    return FALSE;
+  }
 }

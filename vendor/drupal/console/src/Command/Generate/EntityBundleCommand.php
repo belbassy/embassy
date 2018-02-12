@@ -65,7 +65,12 @@ class EntityBundleCommand extends Command
             ->setName('generate:entity:bundle')
             ->setDescription($this->trans('commands.generate.entity.bundle.description'))
             ->setHelp($this->trans('commands.generate.entity.bundle.help'))
-            ->addOption('module', null, InputOption::VALUE_REQUIRED, $this->trans('commands.common.options.module'))
+            ->addOption(
+                'module',
+                null,
+                InputOption::VALUE_REQUIRED,
+                $this->trans('commands.common.options.module')
+            )
             ->addOption(
                 'bundle-name',
                 null,
@@ -89,7 +94,7 @@ class EntityBundleCommand extends Command
         $io = new DrupalStyle($input, $output);
 
         // @see use Drupal\Console\Command\Shared\ConfirmationTrait::confirmGeneration
-        if (!$this->confirmGeneration($io)) {
+        if (!$this->confirmGeneration($io, $input)) {
             return 1;
         }
 
@@ -113,12 +118,7 @@ class EntityBundleCommand extends Command
         $io = new DrupalStyle($input, $output);
 
         // --module option
-        $module = $input->getOption('module');
-        if (!$module) {
-            // @see Drupal\Console\Command\Shared\ModuleTrait::moduleQuestion
-            $module = $this->moduleQuestion($io);
-            $input->setOption('module', $module);
-        }
+        $this->getModuleOption();
 
         // --bundle-name option
         $bundleName = $input->getOption('bundle-name');

@@ -107,7 +107,12 @@ class PluginMigrateSourceCommand extends ContainerAwareCommand
             ->setName('generate:plugin:migrate:source')
             ->setDescription($this->trans('commands.generate.plugin.migrate.source.description'))
             ->setHelp($this->trans('commands.generate.plugin.migrate.source.help'))
-            ->addOption('module', null, InputOption::VALUE_REQUIRED, $this->trans('commands.common.options.module'))
+            ->addOption(
+                'module',
+                null,
+                InputOption::VALUE_REQUIRED,
+                $this->trans('commands.common.options.module')
+            )
             ->addOption(
                 'class',
                 null,
@@ -154,12 +159,12 @@ class PluginMigrateSourceCommand extends ContainerAwareCommand
         $io = new DrupalStyle($input, $output);
 
         // @see use Drupal\Console\Command\Shared\ConfirmationTrait::confirmGeneration
-        if (!$this->confirmGeneration($io)) {
+        if (!$this->confirmGeneration($io, $input)) {
             return 1;
         }
 
         $module = $input->getOption('module');
-        $class_name = $input->getOption('class');
+        $class_name = $this->validator->validateClassName($input->getOption('class'));
         $plugin_id = $input->getOption('plugin-id');
         $table = $input->getOption('table');
         $alias = $input->getOption('alias');
@@ -184,12 +189,8 @@ class PluginMigrateSourceCommand extends ContainerAwareCommand
     {
         $io = new DrupalStyle($input, $output);
 
-        $module = $input->getOption('module');
-        if (!$module) {
-            // @see Drupal\Console\Command\Shared\ModuleTrait::moduleQuestion
-            $module = $this->moduleQuestion($io);
-            $input->setOption('module', $module);
-        }
+        // 'module-name' option.
+        $module = $this->getModuleOption();
 
         $class = $input->getOption('class');
         if (!$class) {
@@ -244,14 +245,14 @@ class PluginMigrateSourceCommand extends ContainerAwareCommand
             $fields = [];
             while (true) {
                 $id = $io->ask(
-                    $this->trans('commands.generate.plugin.migrate.source.questions.fields.id'),
+                    $this->trans('commands.generate.plugin.migrate.source.questions.id'),
                     false
                 );
                 if (!$id) {
                     break;
                 }
                 $description = $io->ask(
-                    $this->trans('commands.generate.plugin.migrate.source.questions.fields.description'),
+                    $this->trans('commands.generate.plugin.migrate.source.questions.description'),
                     $id
                 );
                 $fields[] = [
