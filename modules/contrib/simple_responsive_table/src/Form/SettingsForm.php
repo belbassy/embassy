@@ -68,7 +68,7 @@ class SettingsForm extends ConfigFormBase {
     $form['max_width'] = [
       '#type' => 'textfield',
       '#title' => t('Max Width.'),
-      '#description' => t('Make table responsive till the screen of size in pixel.'),
+      '#description' => t('Make table responsive till the screen of size.'),
       '#default_value' => $config->get('max_width'),
     ];
 

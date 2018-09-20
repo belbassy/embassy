@@ -16,12 +16,10 @@
  */
 #}
 <div class="vote-widget vote-widget--like-and-dislike">
-  <div class="vote-like type-{{ entity_type }}" id="like-container-{{ entity_type }}-{{ entity_id }}">
-    <a {{ like_attributes }}>Like</a>
-    <span class="count">{{ likes }}</span>
-  </div>
-  <div class="vote-dislike type-{{ entity_type }}" id="dislike-container-{{ entity_type }}-{{ entity_id }}">
-    <a {{ dislike_attributes }}>Dislike</a>
-    <span class="count">{{ dislikes }}</span>
-  </div>
+  {% for type, icon in icons %}
+    <div class="vote-{{ type }} type-{{ entity_type }}" id="{{ type }}-container-{{ entity_type }}-{{ entity_id }}">
+      <a {{ icon.attributes }}>{{ icon.label }}</a>
+      <span class="count">{{ icon.count }}</span>
+    </div>
+  {% endfor %}
 </div>

@@ -36,7 +36,7 @@ class VoteController extends ControllerBase implements ContainerInjectionInterfa
 
     // Gets the number of likes and dislikes for the entity.
     list($like, $dislike) = like_and_dislike_get_votes($entity);
-    $operation = ['like' => '', 'dislike' => ''];
+    $operation = ['like' => FALSE, 'dislike' => FALSE];
 
     $vote_storage = $this->entityTypeManager()->getStorage('vote');
     $user_votes = $vote_storage->getUserVotes(
@@ -56,7 +56,7 @@ class VoteController extends ControllerBase implements ContainerInjectionInterfa
     if (empty($user_votes)) {
       // Increment the value for requested vote type.
       $$vote_type_id++;
-      $operation[$vote_type_id] = "voted-$vote_type_id";
+      $operation[$vote_type_id] = TRUE;
 
       // @todo: Moving it after vote creation wrongly returns empty array.
       // Get user votes for opposite vote type.
@@ -85,7 +85,7 @@ class VoteController extends ControllerBase implements ContainerInjectionInterfa
         );
         // Remove opposite vote.
         $$opposite_vote_type_id--;
-        $operation[$opposite_vote_type_id] = '';
+        $operation[$opposite_vote_type_id] = FALSE;
       }
 
       // Clear the view builder's cache.
@@ -103,7 +103,7 @@ class VoteController extends ControllerBase implements ContainerInjectionInterfa
       if ($this->config('like_and_dislike.settings')->get('allow_cancel_vote')) {
         // Decrement the value for requested vote type.
         $$vote_type_id--;
-        $operation[$vote_type_id] = '';
+        $operation[$vote_type_id] = FALSE;
 
         // Remove the vote.
         $vote_storage->deleteUserVotes(

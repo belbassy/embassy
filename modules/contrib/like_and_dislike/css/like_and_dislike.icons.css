@@ -21,7 +21,7 @@
   cursor: auto;
 }
 
-.voted-like {
+.vote-like a.voted {
   background-position: 0 -29px!important;
 }
 
@@ -38,7 +38,7 @@
   cursor: auto;
 }
 
-.voted-dislike {
+.vote-dislike a.voted {
   background-position: -28px -29px!important;
 }
 
